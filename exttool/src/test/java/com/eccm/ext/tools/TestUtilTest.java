@@ -3,9 +3,17 @@ package com.eccm.ext.tools;
 
 import static org.junit.Assert.*;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.security.Key;
 import java.sql.Connection;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.httpclient.HttpURL;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.junit.Test;
 
 import com.eccm.ext.tools.db.DataSourceHandler;
@@ -14,7 +22,46 @@ import com.eccm.ext.tools.db.ExtDBProvider;
 import com.eccm.ext.tools.db.exception.DatabaseRequestException;
 import com.eccm.ext.tools.db.pojo.DBConnectionResource;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.crypto.MacProvider;
+import jodd.http.HttpRequest;
+import jodd.http.HttpResponse;
+import jodd.http.HttpUtil;
+
 public class TestUtilTest {
+	
+	
+	
+	public void testjwt() throws UnsupportedEncodingException{
+		Key key = MacProvider.generateKey();
+	    final String JWT_URL = "";
+		
+		String pubkey = "";
+		String usermail = "";
+		
+		Calendar cal =Calendar.getInstance();
+		cal.add(Calendar.MINUTE, 10);
+		String token = Jwts.builder()
+		  .setSubject(usermail).setExpiration(cal.getTime())
+		  .setIssuedAt(new Date())
+		  .signWith(SignatureAlgorithm.HS256, pubkey)
+		  .compact();
+		//"localhost:8002/jwt"
+		String redirectUrl = "http://" + JWT_URL + "?jwt=" + token;
+		HttpResponse response = new HttpRequest().set(redirectUrl).send();
+		Map<String,Object[]> re = response.form();
+		if(null != re){
+			Object[] obj = re.get("return_to");
+			if(null != obj && obj.length>0)
+				redirectUrl += "&return_to=" + URLEncoder.encode(String.valueOf(obj[0]),"UTF-8");
+			else
+				redirectUrl = "";
+		}else
+			redirectUrl = "";
+		
+	}
+	
 	@Test
 	public void test1(){
 		//ThreadPoolManager.init();
