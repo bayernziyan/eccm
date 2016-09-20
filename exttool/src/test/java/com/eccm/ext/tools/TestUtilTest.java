@@ -16,6 +16,7 @@ import org.apache.commons.httpclient.HttpURL;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.junit.Test;
 
+import com.eccm.ext.tools.constant.CRC32;
 import com.eccm.ext.tools.db.DataSourceHandler;
 import com.eccm.ext.tools.db.DbEventThread;
 import com.eccm.ext.tools.db.ExtDBProvider;
@@ -30,14 +31,25 @@ import jodd.http.HttpResponse;
 import jodd.http.HttpUtil;
 
 public class TestUtilTest {
+	@Test
+	public void testCRC(){
+		String aaa= "{\"username\":\"bill\"}";
+		String bbb= "{\"username\":\"econage\"}";
+		String ccc = new String("{\"username\":\"bill\"}");
+		System.out.println(StringUtil.CRC32(aaa));	
+		System.out.println(StringUtil.CRC32(bbb));
+		System.out.println(StringUtil.CRC32(ccc));	
+		
+		System.out.println(StringUtil.MD5(aaa));
+		System.out.println(StringUtil.MD5(bbb));
 	
-	
+	}
 	
 	public void testjwt() throws UnsupportedEncodingException{
 		Key key = MacProvider.generateKey();
 	    final String JWT_URL = "";
 		
-		String pubkey = "";
+		final String pubkey = "";
 		String usermail = "";
 		
 		Calendar cal =Calendar.getInstance();
@@ -62,7 +74,7 @@ public class TestUtilTest {
 		
 	}
 	
-	@Test
+	
 	public void test1(){
 		//ThreadPoolManager.init();
 		DataSourceHandler db  = null;
