@@ -2,7 +2,7 @@ package com.eccm.ext.tools.constant;
 
 public class CRC32 {
 	
-	    private static long[] crc32Table = new long[256];
+	    private final static long[] crc32Table = new long[256];
 	 
 	    static {
 	        long crcValue;
