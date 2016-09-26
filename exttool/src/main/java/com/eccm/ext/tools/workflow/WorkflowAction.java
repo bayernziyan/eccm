@@ -61,15 +61,15 @@ public class WorkflowAction {
 		return this;
 	}
 	
-	public void execute() {
+	public void execute() throws CommandException {
 		if(!_init)return;
 		if(hds.isEmpty())return;
-		
-	
-        
         
 		for(WorkflowActionHandler hd : hds){
 			hd.doHandler(this);
+			ArrayList<String> err = hd.getException();
+			if(!err.isEmpty())
+				throw new CommandException(err.toString());
 		}		
 	}
 	

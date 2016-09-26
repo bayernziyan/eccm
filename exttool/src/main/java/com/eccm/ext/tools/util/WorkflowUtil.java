@@ -12,6 +12,7 @@ import com.eccm.ext.tools.workflow.ActionType;
 import com.eccm.ext.tools.workflow.WorkflowAction;
 import com.eccm.ext.tools.workflow.WorkflowActionHandler;
 import com.eccm.jooq.newsoft.tables.EclRequestSheet;
+import com.econage.eccm.framework.CommandException;
 
 public class WorkflowUtil {
 	
@@ -22,7 +23,7 @@ public class WorkflowUtil {
 		return re;
 	}
 	
-	public void test(Connection conn){
+	public void test(Connection conn) throws CommandException{
 		
 		new WorkflowAction(ActionType.TK_CK0, null,conn ).addHandler(new WorkflowActionHandler() {
 			

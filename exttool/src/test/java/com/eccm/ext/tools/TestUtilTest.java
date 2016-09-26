@@ -32,14 +32,16 @@ import jodd.http.HttpResponse;
 import jodd.http.HttpUtil;
 
 public class TestUtilTest {
-	
+	@Test
 	public void testCRC(){
 		String aaa= "{\"username\":\"bill\"}";
 		String bbb= "{\"username\":\"econage\"}";
 		String ccc = new String("{\"username\":\"bill\"}");
 		System.out.println(StringUtil.CRC32(aaa));	
 		System.out.println(StringUtil.CRC32(bbb));
-		System.out.println(StringUtil.CRC32(ccc));	
+		System.out.println(StringUtil.CRC32(ccc));
+		
+		System.out.println(StringUtil.CRC32("1"));	
 		
 		System.out.println(StringUtil.MD5(aaa));
 		System.out.println(StringUtil.MD5(bbb));
@@ -74,7 +76,7 @@ public class TestUtilTest {
 			redirectUrl = "";
 		
 	}
-	@Test	
+	
 	public void test1(){
 		//ThreadPoolManager.init();
 		DataSourceHandler db  = null;
