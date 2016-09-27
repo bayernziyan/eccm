@@ -23,6 +23,10 @@ import com.eccm.ext.tools.db.ExtDBProvider;
 import com.eccm.ext.tools.db.exception.DatabaseRequestException;
 import com.eccm.ext.tools.db.pojo.DBConnectionResource;
 import com.eccm.ext.tools.util.StringUtil;
+import com.eccm.ext.tools.workflow.WorkflowAction;
+import com.eccm.ext.tools.workflow.WorkflowActionHandler;
+import com.eccm.ext.tools.workflow.handler.GetFormDataValuesByItemDefSingly;
+import com.eccm.ext.tools.workflow.handler.GetFormDataValuesByItemIdSingly;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -45,6 +49,14 @@ public class TestUtilTest {
 		
 		System.out.println(StringUtil.MD5(aaa));
 		System.out.println(StringUtil.MD5(bbb));
+		System.out.println(new WorkflowActionHandler("12312") {
+			
+			@Override
+			public void doHandler(WorkflowAction action, Connection conn) {
+				// TODO Auto-generated method stub
+				
+			}
+		}.getName());
 	
 	}
 	

@@ -14,10 +14,15 @@ import com.eccm.ext.tools.workflow.WorkflowActionHandler;
 public class GetFormDataValuesByItemDefSingly extends WorkflowActionHandler {
 	private static final Logger LOG = Logger.getLogger(GetFormDataValuesByItemDefSingly.class);
 	
-	public final String name = "get_form_data_itemdef_single";
+	public static final String name = "get_form_data_itemdef_single";	
+	public static final String param_in_list = name+"_in_list";
+	public static final String param_out_map = name+"_out_getformdata_bydef_hashmap";
 	
-	public final String param_in_list = name+"_in_list";
-	public final String param_out_map = name+"_out_getformdata_bydef_hashmap";
+	@Override
+	public String getName() {
+		return name;
+	}
+	
 	@Override
 	public void doHandler(WorkflowAction action,Connection conn) {
 		Object _list  =  getArg(action, param_in_list);		
