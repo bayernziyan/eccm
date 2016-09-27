@@ -40,7 +40,15 @@ public abstract class WorkflowActionHandler {
 		action.argIn(key, v);
 	}
 	protected Object getArg(WorkflowAction action,String key){
-		return action.argOut(key);
+		Object _obj = action.argOut(key);
+		ArrayList<String> inlistRel = getRelateArgList(key);
+		if( null == _obj && null!=inlistRel){
+			for(String i : inlistRel){
+				_obj  =  getArg(action, i);
+				if(null!=_obj)break;
+			}
+		}
+		return _obj;
 	}
 	
 	public void setException(Exception e){

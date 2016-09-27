@@ -57,7 +57,7 @@ public class TestUtilTest {
 				
 			}
 		}.getName());
-	
+		System.out.println(new GetFormDataValuesByItemIdSingly().getName());
 	}
 	
 	public void testJWT() throws UnsupportedEncodingException{

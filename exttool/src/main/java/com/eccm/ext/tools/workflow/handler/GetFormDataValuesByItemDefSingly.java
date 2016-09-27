@@ -27,13 +27,6 @@ public class GetFormDataValuesByItemDefSingly extends WorkflowActionHandler {
 	public void doHandler(WorkflowAction action,Connection conn) {
 		Object _list  =  getArg(action, param_in_list);		
 		try{	
-			ArrayList<String> inlistRel = getRelateArgList(param_in_list);
-			if( null == _list && null!=inlistRel){
-				for(String i : inlistRel){
-					_list  =  getArg(action, i);
-					if(null!=_list)break;
-				}
-			}
 			if( null == _list ) throw new IllegalArgumentException("参数为空");
 			HashMap<String,String> map = WorkflowUtil.getFormDataValueByItemDefList(conn,(List<String>)_list, action.getWfBean().getFormDataId(),action.getWfBean().getFormId());
 			if(null != map) {
