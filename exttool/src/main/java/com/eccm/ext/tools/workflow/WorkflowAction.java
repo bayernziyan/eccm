@@ -9,6 +9,8 @@ import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
+
 import com.eccm.ext.tools.util.StringUtil;
 import com.eccm.ext.tools.workflow.ActionType;
 import com.econage.eccm.biz.container.ContainerOperationHelper;
@@ -18,7 +20,7 @@ import com.econage.eccm.oa.form.FormHelper;
 import com.econage.eccm.util.CodedValueHelper;
 
 public class WorkflowAction {
-	
+	private static final Logger LOG = Logger.getLogger(WorkflowAction.class);
 	public WorkflowAction(ActionType type, HttpServletRequest req,Connection conn){
 		_wfId = StringUtil.isBlank(req.getParameter("workflow_id"),req.getParameter("workplace_id"));
 		_formDateId = req.getParameter("form_data_id");
@@ -57,7 +59,8 @@ public class WorkflowAction {
 	
 	public WorkflowAction addHandler(WorkflowActionHandler handler){
 		if(null == handler)return this;
-		hds.add(handler);
+		if(!hds.add(handler))
+			LOG.warn("添加流程处理事件["+handler.getName()+"]失败！");
 		return this;
 	}
 	
