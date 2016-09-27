@@ -1,9 +1,12 @@
 package com.eccm.ext.tools.workflow;
 
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
@@ -24,7 +27,7 @@ public class WorkflowAction {
 	public WorkflowAction(ActionType type, HttpServletRequest req,Connection conn){
 		_wfId = StringUtil.isBlank(req.getParameter("workflow_id"),req.getParameter("workplace_id"));
 		_formDateId = req.getParameter("form_data_id");
-		
+		this.conn = conn;
 		if( StringUtil.isBlank(_wfId) )return;
 		try{
 			switch(type){
@@ -59,6 +62,7 @@ public class WorkflowAction {
 	
 	public WorkflowAction addHandler(WorkflowActionHandler handler){
 		if(null == handler)return this;
+		if(hds.isEmpty()) hds = new LinkedHashSet<WorkflowActionHandler>();
 		if(!hds.add(handler))
 			LOG.warn("添加流程处理事件["+handler.getName()+"]失败！");
 		return this;
@@ -69,14 +73,21 @@ public class WorkflowAction {
 		if(hds.isEmpty())return;
         
 		for(WorkflowActionHandler hd : hds){
-			hd.doHandler(this);
-			ArrayList<String> err = hd.getException();
+			hd.doHandler(this,this.conn);
+			List<String> err = hd.getException();
 			if(!err.isEmpty())
 				throw new CommandException(err.toString());
 		}		
 	}
 	
-	
+	public void argIn(String key, Object v){
+		if(in_and_out.isEmpty())in_and_out = new HashMap<String, Object>();
+		in_and_out.put(key, v);
+	}
+	public Object argOut(String key){
+		if(in_and_out.containsKey(key))return in_and_out.get(key);
+		return null;
+	}
 	
 	public String get_wfId() {
 		return _wfId;
@@ -107,7 +118,10 @@ public class WorkflowAction {
 	private String _wfId;
 	private String _formDateId;
 	private boolean _init = false;
-	private HashSet<WorkflowActionHandler> hds = (HashSet<WorkflowActionHandler>) Collections.<WorkflowActionHandler>emptySet();
+	private Set<WorkflowActionHandler> hds = Collections.<WorkflowActionHandler>emptySet();
+	private Map<String,Object> in_and_out = Collections.<String,Object>emptyMap();
+	
+	private Connection conn ;
 	
 	private com.econage.eccm.bean.RequestSheetBean 	wfBean;
 	private com.econage.eccm.bean.TaskBean taskBean;
