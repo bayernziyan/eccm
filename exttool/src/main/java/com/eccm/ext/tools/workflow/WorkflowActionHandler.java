@@ -41,11 +41,13 @@ public abstract class WorkflowActionHandler {
 	}
 	protected Object getArg(WorkflowAction action,String key){
 		Object _obj = action.argOut(key);
-		ArrayList<String> inlistRel = getRelateArgList(key);
-		if( null == _obj && null!=inlistRel){
-			for(String i : inlistRel){
-				_obj  =  getArg(action, i);
-				if(null!=_obj)break;
+		if( null == _obj){
+			ArrayList<String> inlistRel = getRelateArgList(key);
+			if(  null!=inlistRel){
+				for(String i : inlistRel){
+					_obj  =  action.argOut(i);
+					if(null!=_obj)break;
+				}
 			}
 		}
 		return _obj;
