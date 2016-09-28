@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -35,7 +36,7 @@ public class WorkflowUtil {
 		// and def_field_id in ('');
 		DSLContext ds = DSL.using(conn, SQLDialect.ORACLE);
 		EclRequestFormItem tb = EclRequestFormItem.ECL_REQUEST_FORM_ITEM;
-		Result<Record> re = ds.select(tb.fields()).from(tb).where(tb.FORM_ID.eq(formId)).and(tb.DEF_FIELD_ID.in(list))
+		Result<Record> re = ds.select(tb.fields()).from(tb).where(tb.FORM_ID.eq(formId)).and(tb.DEF_FIELD_ID.in(list.toArray()))
 				.fetch();
 		if (!re.isEmpty()) {
 			HashMap<String, Record> map = new HashMap<String, Record>();
@@ -68,6 +69,7 @@ public class WorkflowUtil {
 		while(it1.hasNext()){
 			String itemid = it1.next();
 			Record c = id2def.get(itemid);
+			if(null == c)continue;
 			String def  = String.valueOf(c.getValue(tb.DEF_FIELD_ID));
 			String val = fdvalues.get(itemid);
 			map.put(def, val);

@@ -7,8 +7,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.Key;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -23,6 +25,7 @@ import com.eccm.ext.tools.db.ExtDBProvider;
 import com.eccm.ext.tools.db.exception.DatabaseRequestException;
 import com.eccm.ext.tools.db.pojo.DBConnectionResource;
 import com.eccm.ext.tools.util.StringUtil;
+import com.eccm.ext.tools.workflow.ActionType;
 import com.eccm.ext.tools.workflow.WorkflowAction;
 import com.eccm.ext.tools.workflow.WorkflowActionHandler;
 import com.eccm.ext.tools.workflow.handler.GetFormDataValuesByItemDefSingly;
@@ -37,6 +40,39 @@ import jodd.http.HttpUtil;
 
 public class TestUtilTest {
 	@Test
+	public void testWfFormDataSingle(){
+		DataSourceHandler db  = null;
+		Connection conn = null;
+		try {
+			 db =  ExtDBProvider.getInstance().getDataSourceHandler("jlxy");
+			 conn = db.getConnection();
+			 WorkflowAction action = new WorkflowAction(ActionType.WF_ED, null, conn);
+			 action.init(ActionType.WF_ED, conn, null, "100658", "57688", "0", "test", "");
+			 ArrayList<String> list = new ArrayList<String>();
+			// list.add("36444");
+			 //list.add("36010");
+			 list.add("wjbt"); list.add("seq_no");
+			 //wjbt seq_no
+			 
+			/* action.argIn(GetFormDataValuesByItemIdSingly.param_in_list, list);			 
+			 action.addHandler(new GetFormDataValuesByItemIdSingly()).execute();
+			 HashMap<String,String> map = (HashMap<String, String>) action.argOut(GetFormDataValuesByItemIdSingly.param_out_map);
+			 System.out.println(map);*/
+			 
+			 action.argIn(GetFormDataValuesByItemDefSingly.param_in_list, list);			 
+			 action.addHandler(new GetFormDataValuesByItemDefSingly()).execute();
+			 HashMap<String,String> map = (HashMap<String, String>) action.argOut(GetFormDataValuesByItemDefSingly.param_out_map);
+			 System.out.println(map);
+			 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			db.returnBackConnectionToPool(conn);
+		}
+		
+	}
+	
+	//@Test
 	public void testCRC(){
 		String aaa= "{\"username\":\"bill\"}";
 		String bbb= "{\"username\":\"econage\"}";
@@ -49,15 +85,7 @@ public class TestUtilTest {
 		
 		System.out.println(StringUtil.MD5(aaa));
 		System.out.println(StringUtil.MD5(bbb));
-		System.out.println(new WorkflowActionHandler("12312") {
-			
-			@Override
-			public void doHandler(WorkflowAction action, Connection conn) {
-				// TODO Auto-generated method stub
-				
-			}
-		}.getName());
-		System.out.println(new GetFormDataValuesByItemIdSingly().getName());
+		
 	}
 	
 	public void testJWT() throws UnsupportedEncodingException{
