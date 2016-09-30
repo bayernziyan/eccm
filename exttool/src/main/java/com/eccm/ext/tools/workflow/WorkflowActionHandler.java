@@ -40,10 +40,10 @@ public abstract class WorkflowActionHandler {
 		return null;
 	}
 	
-	protected void setArg(WorkflowAction action,String key,Object v){
+	public void setArg(WorkflowAction action,String key,Object v){
 		action.argIn(key, v);
 	}
-	protected Object getArg(WorkflowAction action,String key){
+	public Object getArg(WorkflowAction action,String key){
 		Object _obj = action.argOut(key);
 		if( null == _obj){
 			ArrayList<String> inlistRel = getRelateArgList(key);

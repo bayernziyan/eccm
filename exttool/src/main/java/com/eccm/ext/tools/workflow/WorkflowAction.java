@@ -1,6 +1,7 @@
 package com.eccm.ext.tools.workflow;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,12 +18,38 @@ import org.apache.log4j.Logger;
 
 import com.eccm.ext.tools.util.StringUtil;
 import com.eccm.ext.tools.workflow.ActionType;
+import com.eccm.ext.tools.workflow.handler.GetFormDataValuesByItemDefMulti;
+import com.eccm.ext.tools.workflow.handler.GetFormDataValuesByItemDefSingly;
 import com.econage.eccm.biz.container.ContainerOperationHelper;
 import com.econage.eccm.facade.SessionFacade;
 import com.econage.eccm.framework.CommandException;
 import com.econage.eccm.oa.form.FormHelper;
 import com.econage.eccm.util.CodedValueHelper;
-
+/**
+ * <pre>参数赋值说明：
+ * 方法一、直接赋值 -- {@code action.argIn(GetFormDataValuesByItemDefMulti.param_in_whereitem_string, "\"wjbt\"='"+v+"'");}
+ * 
+ * 方法二、动态赋值 -- {@code 
+ * 	 action通过执行trigger 给 action添加参数
+ * 	 action.argIn(GetFormDataValuesByItemDefMulti.param_in_trigger,new ParamTranslator(action,GetFormDataValuesByItemDefSingly.param_out_map) {
+		public void translate() {
+		//获取参数
+		Object paramin = action.argOut(this.paramName);
+		if(null == paramin) return;
+		//todo 参数转换
+		action.argIn(GetFormDataValuesByItemDefMulti.param_in_whereitem_string, "\"wjbt\"='"+v+"'");
+	}}
+ * 方法三、关联赋值 -- {@code  action 通过 getArg("test") 赋值给 GetFormDataValuesByItemDefSingly.param_in_list  
+   HashMap<String,ArrayList<String>> argRelationShip = new HashMap<String, ArrayList<String>>();
+   ArrayList<String> paramlist = new ArrayList<String>();paramlist.add("test1");
+   argRelationShip.put(GetFormDataValuesByItemDefSingly.param_in_list, paramlist);
+       初始化WorkflowActionHandler时作为参数传入
+   action.addHandler(new GetFormDataValuesByItemDefSingly(argRelationShip))			 
+	}
+ * </pre>
+ * @author bayern
+ *
+ */
 public class WorkflowAction {
 	private static final Logger LOG = Logger.getLogger(WorkflowAction.class);
 	public WorkflowAction(ActionType type, HttpServletRequest req,Connection conn){
@@ -91,6 +118,7 @@ public class WorkflowAction {
 	}
 	
 	public void argIn(String key, Object v){
+		if(v instanceof ParamTranslator && !key.endsWith("_trigger") ){LOG.warn("ParamTranslator只允许添加给trigger参数");return;}
 		if(in_and_out.isEmpty())in_and_out = new HashMap<String, Object>();
 		in_and_out.put(key, v);
 	}

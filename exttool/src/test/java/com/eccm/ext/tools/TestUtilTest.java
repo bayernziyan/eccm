@@ -27,6 +27,7 @@ import com.eccm.ext.tools.db.exception.DatabaseRequestException;
 import com.eccm.ext.tools.db.pojo.DBConnectionResource;
 import com.eccm.ext.tools.util.StringUtil;
 import com.eccm.ext.tools.workflow.ActionType;
+import com.eccm.ext.tools.workflow.ParamTranslator;
 import com.eccm.ext.tools.workflow.WorkflowAction;
 import com.eccm.ext.tools.workflow.WorkflowActionHandler;
 import com.eccm.ext.tools.workflow.handler.GetFormDataValuesByItemDefMulti;
@@ -44,6 +45,67 @@ import jodd.http.HttpUtil;
 public class TestUtilTest {
 	
 	@Test
+	public void testWfFormDateMultiWithSingleRelated(){
+		DataSourceHandler db  = null;
+		Connection conn = null;
+		try {
+			 db =  ExtDBProvider.getInstance().getDataSourceHandler("jlxy");
+			 conn = db.getConnection();
+			 WorkflowAction action = new WorkflowAction(ActionType.WF_ED, null, conn);
+			 action.init(ActionType.WF_ED, conn, null, "100658", "57688", "0", "test", "");
+			 
+			 ArrayList<String> list = new ArrayList<String>();
+			/* list.add("36444");
+			 list.add("36010");*/
+			 list.add("wjbt"); list.add("seq_no");
+			 /*action.argIn(GetFormDataValuesByItemIdMulti.param_in_list, list);	
+			 
+			 action.argIn(GetFormDataValuesByItemIdMulti.param_in_pagesize_int,20);
+			 action.argIn(GetFormDataValuesByItemIdMulti.param_in_pagestart_int,0);
+			 
+			 action.argIn(GetFormDataValuesByItemIdMulti.param_in_whereitem_string,"\"36444\" is not null and \"36010\" is not null");
+			 action.addHandler(new GetFormDataValuesByItemIdMulti()).execute();
+			 List<HashMap<String, Object>> listmap = (List<HashMap<String, Object>>) action.argOut(GetFormDataValuesByItemIdMulti.param_out_list_map);
+			 System.out.println(listmap);*/
+			 
+			 action.argIn(GetFormDataValuesByItemDefMulti.param_in_list, list);	
+			 
+			 action.argIn(GetFormDataValuesByItemDefMulti.param_in_pagesize_int,20);
+			 action.argIn(GetFormDataValuesByItemDefMulti.param_in_pagestart_int,0);
+			 
+			 action.argIn(GetFormDataValuesByItemDefMulti.param_in_whereitem_string,"\"wjbt\" is not null and \"seq_no\" is not null");
+			 
+			 action.argIn(GetFormDataValuesByItemDefSingly.param_in_list, list);
+			// HashMap<String,ArrayList<String>> argRelationShip = new HashMap<String, ArrayList<String>>();
+			// ArrayList<String> paramlist = new ArrayList<String>();
+			 action.argIn(GetFormDataValuesByItemDefMulti.param_in_trigger,new ParamTranslator(action,GetFormDataValuesByItemDefSingly.param_out_map) {
+				@Override
+				public void translate() {
+					Object paramin = action.argOut(this.paramName);
+					if(null == paramin) return;
+					HashMap<String ,String> map = (HashMap<String ,String>)paramin;
+					String v = map.get("wjbt");
+					System.out.println(v);
+					action.argIn(GetFormDataValuesByItemDefMulti.param_in_whereitem_string, "\"wjbt\"='"+v+"'");
+				}
+			});
+			// argRelationShip.put(GetFormDataValuesByItemDefMulti.param_in_list, paramlist);
+			 
+			 
+			 
+			 action.addHandler(new GetFormDataValuesByItemDefSingly()). addHandler(new GetFormDataValuesByItemDefMulti()).execute();
+			 List<HashMap<String, Object>> listmap = (List<HashMap<String, Object>>) action.argOut(GetFormDataValuesByItemDefMulti.param_out_list_map);
+			 System.out.println(listmap);
+			 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			db.returnBackConnectionToPool(conn);
+		}
+		
+	}
+	
+	//@Test
 	public void testWfFormDateMulti(){
 		DataSourceHandler db  = null;
 		Connection conn = null;
@@ -73,6 +135,10 @@ public class TestUtilTest {
 			 action.argIn(GetFormDataValuesByItemDefMulti.param_in_pagestart_int,0);
 			 
 			 action.argIn(GetFormDataValuesByItemDefMulti.param_in_whereitem_string,"\"wjbt\" is not null and \"seq_no\" is not null");
+			
+			
+			 
+			 
 			 action.addHandler(new GetFormDataValuesByItemDefMulti()).execute();
 			 List<HashMap<String, Object>> listmap = (List<HashMap<String, Object>>) action.argOut(GetFormDataValuesByItemDefMulti.param_out_list_map);
 			 System.out.println(listmap);
