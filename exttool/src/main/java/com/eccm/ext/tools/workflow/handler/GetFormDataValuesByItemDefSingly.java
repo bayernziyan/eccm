@@ -10,7 +10,17 @@ import org.apache.log4j.Logger;
 import com.eccm.ext.tools.util.WorkflowUtil;
 import com.eccm.ext.tools.workflow.WorkflowAction;
 import com.eccm.ext.tools.workflow.WorkflowActionHandler;
-
+/**
+ * 
+ * @author bayern
+ * <pre>基于当前流程，通过自定义标识 获取对应的参数值</pre>
+ * <dl>
+ * 	  <dt>输入参数</dt>
+ * 	  <dd>param_in_list 为自定义标识列表</dd>
+ * 	  <dt>输出参数</dt>
+ * 	  <dd>param_out_map 为自定义标识 和 对应参数值的映射</dd>
+ * </dl>
+ */
 public class GetFormDataValuesByItemDefSingly extends WorkflowActionHandler {
 	private static final Logger LOG = Logger.getLogger(GetFormDataValuesByItemDefSingly.class);
 	
@@ -34,5 +44,9 @@ public class GetFormDataValuesByItemDefSingly extends WorkflowActionHandler {
 			}			
 		}catch(Exception e){setException(e);LOG.error(e);}
 	}
-
+	
+	public GetFormDataValuesByItemDefSingly(){}
+	public GetFormDataValuesByItemDefSingly(HashMap<String,ArrayList<String>> argRelationShip){
+		this.argRelationShip = argRelationShip;
+	}
 }

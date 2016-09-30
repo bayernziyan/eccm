@@ -8,16 +8,22 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
+import org.jooq.SelectConditionStep;
+import org.jooq.Table;
 import org.jooq.impl.DSL;
 
 import com.eccm.jooq.newsoft.tables.EclRequestFormItem;
+import com.eccm.jooq.newsoft.tables.EclRequestFormItemData;
 import com.eccm.jooq.newsoft.tables.EclRequestSheet;
 
 public class WorkflowUtil {
@@ -49,6 +55,108 @@ public class WorkflowUtil {
 		return null;
 	}
 	
+	/**
+	 * 获取符合条件的所有流程对应的表单数据，可分页
+	 * @param conn
+	 * @param list
+	 * @param templateId
+	 * @param where_itemv
+	 * @param where_wf
+	 * @param pagestart 记录的开始
+	 * @param pagesize  page
+	 * @return
+	 */
+	public static List<HashMap<String,Object>> getFormDataValueListByItemIdList(Connection conn,final List<String> list,int templateId,String where_itemv,String where_wf,int pagestart,int pagesize){
+		DSLContext ds = DSL.using(conn,SQLDialect.ORACLE);
+		Field[] f = new Field[list.size()+1];
+		int itmiind = 0;
+		for(String itemid : list){
+			f[itmiind++] = EclRequestFormItemData.ECL_REQUEST_FORM_ITEM_DATA.ITEM_ID.decode(itemid,EclRequestFormItemData.ECL_REQUEST_FORM_ITEM_DATA.VALUE,"").max().as(itemid);
+		}
+		f[itmiind++] = EclRequestFormItemData.ECL_REQUEST_FORM_ITEM_DATA.FORM_DATA_ID;
+		
+		SelectConditionStep  wfc = ds.select(EclRequestSheet.ECL_REQUEST_SHEET.FORM_DATA_ID).from(EclRequestSheet.ECL_REQUEST_SHEET)
+		.where("1=1").and(EclRequestSheet.ECL_REQUEST_SHEET.TEMPLATE_ID.eq(templateId));
+		if(!StringUtil.isBlank(where_wf))
+			wfc.and(where_wf);
+		
+		Table nested =
+				ds.select(f).from(EclRequestFormItemData.ECL_REQUEST_FORM_ITEM_DATA).where(EclRequestFormItemData.ECL_REQUEST_FORM_ITEM_DATA.FORM_DATA_ID.in(
+						wfc
+						)).groupBy(EclRequestFormItemData.ECL_REQUEST_FORM_ITEM_DATA.FORM_DATA_ID).asTable("nested");
+		
+	
+		SelectConditionStep fdc = 	ds.select(nested.fields()).from(nested).where("1=1");
+		if(!StringUtil.isBlank(where_itemv))
+			fdc.and(where_itemv);
+		fdc.orderBy(nested.field("FORM_DATA_ID").desc());
+		System.out.println(fdc.limit(pagestart, pagesize).getSQL());
+		List<HashMap<String, Object>> re = fdc.limit(pagestart, pagesize).fetchMaps();
+		return re;
+	}
+	
+	
+	/**
+	 * 获取符合条件的所有流程对应的表单数据，可分页
+	 * @param conn
+	 * @param list
+	 * @param templateId
+	 * @param where_itemv
+	 * @param where_wf
+	 * @param pagestart 记录的开始
+	 * @param pagesize  page
+	 * @return
+	 */
+	public static List<HashMap<String,Object>> getFormDataValueListByItemDefList(Connection conn,final List<String> list,int templateId,int formId,String where_itemv,String where_wf,int pagestart,int pagesize){
+		if (null == list || list.isEmpty())
+			return null;
+		HashMap<String, Record> id2def = getMapFromItemId2ItemDefByItemDef(conn, list, formId);
+		if (null == id2def)
+			return null;
+		Iterator<String> it = id2def.keySet().iterator();
+		ArrayList<String> itemIds = new ArrayList<String>();
+		while(it.hasNext()){
+			itemIds.add(it.next());
+		}
+		
+		DSLContext ds = DSL.using(conn,SQLDialect.ORACLE);
+		EclRequestFormItem tb = EclRequestFormItem.ECL_REQUEST_FORM_ITEM;
+		Field[] f = new Field[itemIds.size()+1];
+		int itmiind = 0;
+		for(String itemid : itemIds){
+			f[itmiind++] = EclRequestFormItemData.ECL_REQUEST_FORM_ITEM_DATA.ITEM_ID.decode(itemid,EclRequestFormItemData.ECL_REQUEST_FORM_ITEM_DATA.VALUE,"").max().as(id2def.get(itemid).getValue(tb.DEF_FIELD_ID).toString());
+		}
+		f[itmiind++] = EclRequestFormItemData.ECL_REQUEST_FORM_ITEM_DATA.FORM_DATA_ID;
+		
+		SelectConditionStep  wfc = ds.select(EclRequestSheet.ECL_REQUEST_SHEET.FORM_DATA_ID).from(EclRequestSheet.ECL_REQUEST_SHEET)
+		.where("1=1").and(EclRequestSheet.ECL_REQUEST_SHEET.TEMPLATE_ID.eq(templateId));
+		if(!StringUtil.isBlank(where_wf))
+			wfc.and(where_wf);
+		
+		Table nested =
+				ds.select(f).from(EclRequestFormItemData.ECL_REQUEST_FORM_ITEM_DATA).where(EclRequestFormItemData.ECL_REQUEST_FORM_ITEM_DATA.FORM_DATA_ID.in(
+						wfc
+						)).groupBy(EclRequestFormItemData.ECL_REQUEST_FORM_ITEM_DATA.FORM_DATA_ID).asTable("nested");
+		
+	
+		SelectConditionStep fdc = 	ds.select(nested.fields()).from(nested).where("1=1");
+		if(!StringUtil.isBlank(where_itemv))
+			fdc.and(where_itemv);
+		fdc.orderBy(nested.field("FORM_DATA_ID").desc());
+		System.out.println(fdc.limit(pagestart, pagesize).getSQL());
+		List<HashMap<String, Object>> re = fdc.limit(pagestart, pagesize).fetchMaps();
+		return re;
+	}
+	
+	/**
+	 * 通过ItemDef自定义标识
+	 * 获取单条form_data_id的表单数据
+	 * @param conn
+	 * @param list
+	 * @param formDataId
+	 * @param formId
+	 * @return
+	 */
 	public static HashMap<String, String> getFormDataValueByItemDefList(Connection conn, final List<String> list,
 			int formDataId, int formId) {
 		if (null == list || list.isEmpty())

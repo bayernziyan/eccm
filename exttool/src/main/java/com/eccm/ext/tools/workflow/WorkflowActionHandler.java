@@ -7,17 +7,21 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.collections.bag.SynchronizedSortedBag;
+import org.apache.log4j.Logger;
 
 @SuppressWarnings("unused")
 public abstract class WorkflowActionHandler {
-	
+	private static final Logger LOG = Logger.getLogger(WorkflowActionHandler.class);
 	private String name = "";
 	private int status;
 	private List<String> errmsg = Collections.<String>emptyList();
-	private HashMap<String,ArrayList<String>> argRelationShip = null;
+	protected HashMap<String,ArrayList<String>> argRelationShip = null;
 	
 	public  WorkflowActionHandler(String name,HashMap<String,ArrayList<String>> argRelationShip){
 		this.name = name;
+		this.argRelationShip = argRelationShip;
+	}
+	public  WorkflowActionHandler(HashMap<String,ArrayList<String>> argRelationShip){		
 		this.argRelationShip = argRelationShip;
 	}
 	
@@ -46,7 +50,7 @@ public abstract class WorkflowActionHandler {
 			if(  null!=inlistRel){
 				for(String i : inlistRel){
 					_obj  =  action.argOut(i);
-					if(null!=_obj)break;
+					if(null!=_obj){LOG.info(getName()+",从["+i+"]获取参数:"+_obj);break;}
 				}
 			}
 		}
@@ -73,13 +77,13 @@ public abstract class WorkflowActionHandler {
 		 if(!(obj instanceof WorkflowActionHandler)){  
 	            return false;  
 	        }  
-		if(this.name.isEmpty()) return true;
-		return this.name .equals(((WorkflowActionHandler)obj).getName());
+		if(getName().isEmpty()) return true;
+		return getName() .equals(((WorkflowActionHandler)obj).getName());
 	}
 	
 	@Override
 	public int hashCode() {
-		return this.name.hashCode() << 6 + this.name.length();
+		return getName().hashCode() << 6 + getName().length();
 	}
 	
 	public String getName(){return this.name;}
