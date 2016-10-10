@@ -228,6 +228,56 @@ public class DateUtil {
 	 * 日期 转换为指定格式
 	 * @param dateString
 	 * @param dateFormat
+	 * @param dateSymbol
+	 * @return
+	 */
+	public static String convertString2FormatString(String dateString,DateFormat dateFormat,DateSymbol dateSymbol){
+		DateFormat _dateFormat = null;
+		LinkedHashMap<Integer, String> struct = getDateStringStruct(dateString);
+		try{_dateFormat = fatchDateFormat(dateString,struct);}catch(IllegalArgumentException e){
+			logger.warn(e.getMessage());
+		}	
+		//if(_dateFormat == dateFormat)return dateString;		
+		try {			
+			if( null != _dateFormat){
+				Date date = convertString2Date(dateString,struct);
+				String newDateString = convertDate2String(date, dateFormat,dateSymbol);
+				return newDateString;
+			} else {
+				
+				//DateSymbol dateSymbol = new DateSymbol();
+				int[] points = getDateFormatPoints(struct);
+				String formatString = DateFormat.Default.getDateFormat(points, dateSymbol);
+				Date newDate = convertString2Date(dateString,struct);
+				return convertDate2String(newDate, dateFormat.getDateFormat(dateSymbol));
+			}
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		/*int[] df_points = dateFormat.getStructPoint();
+		if(_dateFormat.getStructPoint()[0] > df_points[0]){
+			return dateString.substring(0,df_points[0]);
+		}else{
+			if(_dateFormat == DateFormat.YMD){
+				int coffset = df_points[0] - _dateFormat.getStructPoint()[0];
+				switch(coffset){
+				case 9:return dateString+=" 00:00:00";
+				case 6:return dateString+=" 00:00";
+				}
+			}else if(_dateFormat == DateFormat.YMD_HMI){
+				return dateString+":00";
+			}
+		}*/
+		return EMPTY_STRING;
+	}
+	
+	/**
+	 * 日期 转换为指定格式
+	 * @param dateString
+	 * @param dateFormat
 	 * @return
 	 */
 	public static String convertString2FormatString(String dateString,DateFormat dateFormat){
@@ -382,7 +432,7 @@ public class DateUtil {
 		System.out.println((int)'是');
 		System.out.println((int)('0'));
 		System.out.println((int)('9'));
-		
+		System.out.println(convertString2Date("20160913"));
 		System.out.println(convertString2Date("2016-9-13 15:49"));
 		
 		System.out.println(convertString2FormatString("2016-9-13 15:49",DateFormat.YMD));

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.collections.bag.SynchronizedSortedBag;
 import org.apache.log4j.Logger;
@@ -28,7 +29,7 @@ public abstract class WorkflowActionHandler {
 	public WorkflowActionHandler(String name){
 		this.name = name;
 	}
-	public WorkflowActionHandler(){}
+	public WorkflowActionHandler(){ this.name = UUID.randomUUID().toString();}
 	public abstract void doHandler(WorkflowAction action,Connection conn);
 	
 	

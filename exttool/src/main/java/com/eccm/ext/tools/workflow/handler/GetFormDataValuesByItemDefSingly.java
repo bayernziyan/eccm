@@ -27,6 +27,9 @@ public class GetFormDataValuesByItemDefSingly extends WorkflowActionHandler {
 	
 	public static final String param_in_trigger = name+"_in_trigger";
 	public static final String param_in_list = name+"_in_list";
+	/**
+	 *  HashMap&lt;String,String&gt;
+	 */
 	public static final String param_out_map = name+"_out_getformdata_bydef_hashmap";
 	
 	@Override

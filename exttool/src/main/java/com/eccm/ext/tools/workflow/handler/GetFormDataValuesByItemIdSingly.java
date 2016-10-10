@@ -27,6 +27,9 @@ public class GetFormDataValuesByItemIdSingly extends WorkflowActionHandler {
 	
 	public static final String param_in_trigger = name+"_in_trigger";
 	public static final String param_in_list = name+"_in_list";
+	/**
+	 *  HashMap&lt;String,String&gt;
+	 */
 	public static final String param_out_map = name+"_out_formdata_byid_hashmap";
 	
 	@Override

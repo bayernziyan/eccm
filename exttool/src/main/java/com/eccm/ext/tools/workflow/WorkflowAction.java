@@ -57,7 +57,7 @@ public class WorkflowAction {
 		if(null == req)return;
 		_wfId = StringUtil.isBlank(req.getParameter("workflow_id"),req.getParameter("workplace_id"));
 		_formDateId = req.getParameter("form_data_id");
-		
+		LOG.debug("workflow action init --- " + _wfId);
 		init(type,conn,req.getSession(),_wfId,_formDateId,req.getParameter("save_flag"),req.getParameter("check_cmd"),req.getParameter("check_param"));
 		
 		//if(!StringUtil.isBlank(actName)) _init = true;

@@ -23,6 +23,7 @@ import com.econage.eccm.bean.RequestSheetBean;
 		
 	  @param param_in_trigger 其他输入参数之前读取，如果存在执行ParamTranslator 生成输入参数	
  * 	  @param param_in_list 为表单组件ID
+ *	  @param param_in_ispaging_boolean 是否分页
  * 	  @param param_in_pagestart_int 分页起始序号
  *    @param param_in_pagesize_int 每页记录数
  * 	  @param param_in_whereitem_string 表单组件筛选条件
@@ -37,6 +38,10 @@ public class GetFormDataValuesByItemIdMulti extends WorkflowActionHandler {
 	
 	public static final String param_in_trigger = name+"_in_trigger";
 	public static final String param_in_list = name+"_in_list";
+	/**
+	 * 是否分页
+	 */
+	public static final String param_in_ispaging_boolean = name+"_in_ispaging";
 	/**
 	 * 开始序号
 	 */
@@ -53,7 +58,9 @@ public class GetFormDataValuesByItemIdMulti extends WorkflowActionHandler {
 	 * 对流程的筛选条件
 	 */
 	public static final String param_in_whereworkflow_string = name + "_whereworkflow";
-	
+	/**
+	 *  List&lt;HashMap&lt;String,Object&gt;&gt;
+	 */
 	public static final String param_out_list_map = name+"_out_formdata_byid_list_hashmap";
 	
 	@Override
@@ -65,7 +72,8 @@ public class GetFormDataValuesByItemIdMulti extends WorkflowActionHandler {
 		Object _trigger = getArg(action, param_in_trigger);
 		if(null!=_trigger && _trigger instanceof ParamTranslator)
 			((ParamTranslator)_trigger).translate();
-		Object _list  =  getArg(action, param_in_list);	
+		Object _list  =  getArg(action, param_in_list);
+		Object _ispaging = getArg(action, param_in_ispaging_boolean);
 		Object _pagestart = getArg(action, param_in_pagestart_int);
 		Object _pagesize = getArg(action, param_in_pagesize_int);
 		Object _whereitem = getArg(action, param_in_whereitem_string);
@@ -77,8 +85,9 @@ public class GetFormDataValuesByItemIdMulti extends WorkflowActionHandler {
 			RequestSheetBean wfbean = action.getWfBean();
 			String whereitem = null == _whereitem?"":String.valueOf(_whereitem);
 			String whereworkflow = null == _whereworkflow?"":String.valueOf(_whereworkflow);
+			boolean ispaging = null == _ispaging?false:Boolean.parseBoolean(String.valueOf(_ispaging));
 			
-			List<HashMap<String,Object>> map = WorkflowUtil.getFormDataValueListByItemIdList(conn, (List<String>)_list, wfbean.getTemplateId(), whereitem, whereworkflow, Integer.parseInt(String.valueOf(_pagestart)), Integer.parseInt(String.valueOf(_pagesize)));
+			List<HashMap<String,Object>> map = WorkflowUtil.getFormDataValueListByItemIdList(conn, (List<String>)_list, wfbean.getTemplateId(), whereitem, whereworkflow, Integer.parseInt(String.valueOf(_pagestart)), Integer.parseInt(String.valueOf(_pagesize)),ispaging);
 			if(null != map) setArg(action, param_out_list_map, map);			
 		}catch(Exception e){setException(e);LOG.error(e);}
 	}

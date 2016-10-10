@@ -11,6 +11,8 @@ public enum DateFormat {
 	YMD_HMIS(new int[]{19,4,7,10,13,16}), 
 	//yyyy-MM-ddTHH:mm:ssZ
 	FULL(new int[]{20,4,7,10,13,16,20}),
+	//yyyyMMdd
+	//YMD_NOSB(new int[]{8,4,7}),
 	Default(new int[]{});
 	
 	/*

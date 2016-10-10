@@ -20,11 +20,14 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.junit.Test;
 
 import com.eccm.ext.tools.constant.CRC32;
+import com.eccm.ext.tools.date.DateFormat;
+import com.eccm.ext.tools.date.DateSymbol;
 import com.eccm.ext.tools.db.DataSourceHandler;
 import com.eccm.ext.tools.db.DbEventThread;
 import com.eccm.ext.tools.db.ExtDBProvider;
 import com.eccm.ext.tools.db.exception.DatabaseRequestException;
 import com.eccm.ext.tools.db.pojo.DBConnectionResource;
+import com.eccm.ext.tools.util.DateUtil;
 import com.eccm.ext.tools.util.StringUtil;
 import com.eccm.ext.tools.workflow.ActionType;
 import com.eccm.ext.tools.workflow.ParamTranslator;
@@ -34,6 +37,8 @@ import com.eccm.ext.tools.workflow.handler.GetFormDataValuesByItemDefMulti;
 import com.eccm.ext.tools.workflow.handler.GetFormDataValuesByItemDefSingly;
 import com.eccm.ext.tools.workflow.handler.GetFormDataValuesByItemIdMulti;
 import com.eccm.ext.tools.workflow.handler.GetFormDataValuesByItemIdSingly;
+import com.eccm.ext.tools.workflow.handler.GetFormGridDataValuesByItemDefMulti;
+import com.eccm.ext.tools.workflow.handler.GetFormGridDataValuesByItemIdMulti;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -43,9 +48,34 @@ import jodd.http.HttpResponse;
 import jodd.http.HttpUtil;
 
 public class TestUtilTest {
-	
 	@Test
-	public void testWfFormDateMultiWithSingleRelated(){
+	public void testWfFormGridDataMulti(){
+		DataSourceHandler db  = null;
+		Connection conn = null;
+		try { 
+		db =  ExtDBProvider.getInstance().getDataSourceHandler("nbjk");
+		 conn = db.getConnection();
+		 WorkflowAction action = new WorkflowAction(ActionType.WF_ED, null, conn);
+		 action.init(ActionType.WF_ED, conn, null, "101301", "61334", "0", "test", "");
+		 ArrayList<String> list = new ArrayList<String>();
+		
+		/* list.add("39926");*/ list.add("grid");
+		 action.argIn(GetFormGridDataValuesByItemDefMulti.param_in_list, list);		 
+		 action.addHandler(new GetFormGridDataValuesByItemDefMulti()).execute();
+		 HashMap<String, List<HashMap<String,Object>>> map = (HashMap<String, List<HashMap<String,Object>>>
+)action.argOut(GetFormGridDataValuesByItemDefMulti.param_out_map);
+		 
+		 System.out.println(map);
+		 
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally{}
+		
+	}
+	
+	//@Test
+	public void testWfFormDataMultiWithSingleRelated(){
 		DataSourceHandler db  = null;
 		Connection conn = null;
 		try {
@@ -73,7 +103,7 @@ public class TestUtilTest {
 			 action.argIn(GetFormDataValuesByItemDefMulti.param_in_pagesize_int,20);
 			 action.argIn(GetFormDataValuesByItemDefMulti.param_in_pagestart_int,0);
 			 
-			 action.argIn(GetFormDataValuesByItemDefMulti.param_in_whereitem_string,"\"wjbt\" is not null and \"seq_no\" is not null");
+			// action.argIn(GetFormDataValuesByItemDefMulti.param_in_whereitem_string,"\"wjbt\" is not null and \"seq_no\" is not null");
 			 
 			 action.argIn(GetFormDataValuesByItemDefSingly.param_in_list, list);
 			// HashMap<String,ArrayList<String>> argRelationShip = new HashMap<String, ArrayList<String>>();
@@ -90,10 +120,7 @@ public class TestUtilTest {
 				}
 			});
 			// argRelationShip.put(GetFormDataValuesByItemDefMulti.param_in_list, paramlist);
-			 
-			 
-			 
-			 action.addHandler(new GetFormDataValuesByItemDefSingly()). addHandler(new GetFormDataValuesByItemDefMulti()).execute();
+			 action.addHandler(new GetFormDataValuesByItemDefSingly()).addHandler(new GetFormDataValuesByItemDefMulti()).execute();
 			 List<HashMap<String, Object>> listmap = (List<HashMap<String, Object>>) action.argOut(GetFormDataValuesByItemDefMulti.param_out_list_map);
 			 System.out.println(listmap);
 			 
@@ -195,14 +222,16 @@ public class TestUtilTest {
 		String aaa= "{\"username\":\"bill\"}";
 		String bbb= "{\"username\":\"econage\"}";
 		String ccc = new String("{\"username\":\"bill\"}");
-		System.out.println(StringUtil.CRC32(aaa));	
+		/*System.out.println(StringUtil.CRC32(aaa));	
 		System.out.println(StringUtil.CRC32(bbb));
 		System.out.println(StringUtil.CRC32(ccc));
 		
 		System.out.println(StringUtil.CRC32("1"));	
 		
 		System.out.println(StringUtil.MD5(aaa));
-		System.out.println(StringUtil.MD5(bbb));
+		System.out.println(StringUtil.MD5(bbb));*/
+		
+		System.out.println(DateUtil.convertString2FormatString("2016-10-09", DateFormat.YMD,new DateSymbol(".")));
 		
 	}
 	
