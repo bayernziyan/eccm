@@ -2,6 +2,9 @@ package com.eccm.ext.tools.util;
 
 import static com.eccm.ext.tools.constant.EmptyObjectConstant.EMPTY_STRING;
 
+import org.apache.commons.lang.CharSetUtils;
+import org.apache.commons.lang.StringEscapeUtils;
+
 import com.eccm.ext.tools.constant.MD5N;
 public class StringUtil {
 	public static boolean isIntChar(Character c){
@@ -46,5 +49,12 @@ public class StringUtil {
 	 */
 	public static String MD5(String value){
 		return new MD5N().getMD5ofStr(value);
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(StringEscapeUtils.escapeJava("文档[浏览]"));
+		System.out.println(StringEscapeUtils.unescapeJava("\u9648\u78CA\u5174"));
+		
+		 System.out.println(CharSetUtils.squeeze("a 11 bbbbbb 23123    c dd", "b 23 d"));  
 	}
 }

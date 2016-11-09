@@ -20,6 +20,8 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.junit.Test;
 
 import com.eccm.ext.tools.constant.CRC32;
+import com.eccm.ext.tools.core.ColumnRecord;
+import com.eccm.ext.tools.core.SQLColumnRecordType;
 import com.eccm.ext.tools.date.DateFormat;
 import com.eccm.ext.tools.date.DateSymbol;
 import com.eccm.ext.tools.db.DataSourceHandler;
@@ -48,7 +50,13 @@ import jodd.http.HttpResponse;
 import jodd.http.HttpUtil;
 
 public class TestUtilTest {
+	
 	@Test
+	public void toStringTest() {
+		System.out.println(new ColumnRecord("code",SQLColumnRecordType.ORACLE_NUMBER).eq());
+	}
+	
+	//@Test
 	public void testWfFormGridDataMulti(){
 		DataSourceHandler db  = null;
 		Connection conn = null;

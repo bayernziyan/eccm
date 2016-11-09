@@ -422,11 +422,8 @@ public class DateUtil {
 	public static void main1(String[] args) {
 		System.out.println(convertString2FormatString("2016-9-13 15:49",DateFormat.YMD));
 	}
-	public static void main(String[] args) {
-		
-		
-	}
-	public static void main2(String[] args) throws ParseException {
+	
+	public static void main(String[] args) throws ParseException {
 		System.out.println(convertString2OracleToDate("2016-9-13 16:38",DateFormat.YMD_HMI));
 		System.out.println(getNowTime(DateFormat.YMD_HMI));
 		System.out.println((int)'是');
