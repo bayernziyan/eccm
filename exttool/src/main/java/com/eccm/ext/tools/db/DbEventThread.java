@@ -113,7 +113,8 @@ public class DbEventThread extends Thread {
             	lock.lock();
             	try {
             		 boolean stillWaiting = true;
-            		 while(!checkConnection()){
+            		 while(!checkConnection()||
+            				 (_events_1m.size()==0&&_events_30m.size()==0&&_events_1h.size()==0&&_events_24h.size()==0)){
             		
             			stillWaiting = cond.await(5, TimeUnit.SECONDS);  
             			//LOG.debug("["+getName()+"] checkconnection isstill:"+stillWaiting);
@@ -230,9 +231,17 @@ public class DbEventThread extends Thread {
     */
     public void send(DbEvent event) {
         if (!isInterrupted()) {
-            LOG.debug("New event: " + event);            
+            LOG.debug("New event: " + event); 
             _events_1m.add(event);
-            
+            if(!lock.isLocked()){
+	            lock.lock();
+	            try{
+	            	
+	            	cond.signalAll();
+	            }finally{
+	            	lock.unlock();
+	            }
+            }
         }
     }
 }

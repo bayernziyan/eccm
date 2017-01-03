@@ -2,11 +2,17 @@ package com.eccm.ext.tools.util;
 
 import static java.lang.Math.sqrt;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 /**
  * 质数判断
  * @author bayern
@@ -58,12 +64,24 @@ public class PrimeNumber {
     public boolean isPrime() {
         return number == 2 || sumFactors() == number + 1;
     }
-    
+    @Override
+    public String toString() {
+   
+    	return  new ToStringBuilder(this,ToStringStyle.SHORT_PREFIX_STYLE)
+    		    .append("number", number)
+    		   // .append("att2", att2)
+    		   // .append("att3", att3)
+    		    //.append("super", super.toString())
+    		    .toString();
+    	//ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    	//ReflectionToStringBuilder.toString(this);
+    }
     public static void main(String[] args) {
     	PrimeNumber pnum = PrimeNumber.getPrime(7l);
     	//pnum.setCandidate(7l);
     	
     	System.out.println(pnum.getFactors()+"@@"+pnum.isPrime());
+    	System.out.println(pnum);
     	
 	}
 }

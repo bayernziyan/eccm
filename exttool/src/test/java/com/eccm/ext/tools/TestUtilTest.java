@@ -7,6 +7,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.Key;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -15,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.httpclient.HttpURL;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.junit.Test;
@@ -51,7 +55,7 @@ import jodd.http.HttpUtil;
 
 public class TestUtilTest {
 	
-	@Test
+	
 	public void toStringTest() {
 		System.out.println(new ColumnRecord("code",SQLColumnRecordType.ORACLE_NUMBER).eq());
 	}
@@ -271,22 +275,30 @@ public class TestUtilTest {
 			redirectUrl = "";
 		
 	}
-	
+	@Test
 	public void test1(){
 		//ThreadPoolManager.init();
 		DataSourceHandler db  = null;
 		try {
-			 db =  ExtDBProvider.getInstance().getDataSourceHandler("whe8");
+			 db =  ExtDBProvider.getInstance().getDataSourceHandler("jffc");
+			 Connection conn = db.getConnection();
+			 Date d = new java.text.SimpleDateFormat("yyyy-MM-dd").parse("2020-01-01");
+			 java.sql.Date lastdate = d!=null?new java.sql.Date(d.getTime()):null;
+			 String sql = "select * from user_table where user_id='bill' and modified_date > ?";
+			 new QueryRunner().query(conn, sql, new ResultSetHandler<Void>(){
+
+				@Override
+				public Void handle(ResultSet rs) throws SQLException {
+					if(rs.next())
+						System.out.println(rs.getString("mi"));
+					return null;
+				}
+				 
+			 },lastdate);
 			
-			 db.executeInsert("insert into ext_test (1,'a','val_a')", true);
 			 //System.out.println(Thread.currentThread().getId());
 			
-			 try {
-					Thread.sleep(TimeUnit.DAYS.toDays(10000000));
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+			
 			
 			
 		}  catch (Exception e) {

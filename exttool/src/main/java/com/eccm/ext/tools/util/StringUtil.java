@@ -2,8 +2,13 @@ package com.eccm.ext.tools.util;
 
 import static com.eccm.ext.tools.constant.EmptyObjectConstant.EMPTY_STRING;
 
+import java.util.Date;
+
 import org.apache.commons.lang.CharSetUtils;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.eccm.ext.tools.constant.MD5N;
 public class StringUtil {
@@ -56,5 +61,7 @@ public class StringUtil {
 		System.out.println(StringEscapeUtils.unescapeJava("\u9648\u78CA\u5174"));
 		
 		 System.out.println(CharSetUtils.squeeze("a 11 bbbbbb 23123    c dd", "b 23 d"));  
+		 System.out.println(ReflectionToStringBuilder.toString(new Date()));
+		 System.out.println(ToStringBuilder.reflectionToString(new Date(), ToStringStyle.SHORT_PREFIX_STYLE));
 	}
 }

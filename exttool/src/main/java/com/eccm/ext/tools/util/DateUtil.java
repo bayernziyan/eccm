@@ -2,7 +2,7 @@ package com.eccm.ext.tools.util;
 
 import static com.eccm.ext.tools.constant.EmptyObjectConstant.*;
 
-import java.sql.Connection;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -14,10 +14,7 @@ import org.apache.log4j.Logger;
 
 import com.eccm.ext.tools.date.DateFormat;
 import com.eccm.ext.tools.date.DateSymbol;
-import com.eccm.ext.tools.db.DataSourceHandler;
-import com.eccm.ext.tools.db.ExtDBProvider;
-import com.eccm.ext.tools.db.exception.DatabaseRequestException;
-import com.eccm.ext.tools.db.pojo.DBConnectionResource;
+
 
 
 
